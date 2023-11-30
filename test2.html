@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: url('milky-way-5295160_1920.jpg') center/cover no-repeat fixed;
+        }
+
+
+        #diary-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        #diary-nav {
+            margin-bottom: 20px;
+        }
+
+        #diary-nav a {
+            text-decoration: none;
+            color: #3498db;
+            padding: 10px;
+            margin: 0 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+
+        #diary-nav a:hover {
+            background-color: #3498db;
+            color: #fff;
+        }
+
+        #diary-content {
+            padding: 20px;
+            text-align: left;
+        }
+
+        #schedule-content {
+            padding: 20px;
+            text-align: left;
+        }
+
+        #calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-top: 20px;
+        }
+
+        .day {
+            padding: 10px;
+            text-align: center;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .day:hover {
+            background-color: #3498db;
+            color: #fff;
+        }
+
+        .today {
+            background-color: #3498db;
+            color: #fff;
+        }
+
+        #diary-form label,
+        #diary-form textarea {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        #diary-form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        #diary-form button:hover {
+            background-color: #2980b9;
+        }
+
+
+        #schedule-form label,
+        #schedule-form textarea {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        #schedule-form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        #schedule-form button {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        #schedule-form button:hover {
+            background-color: #2980b9;
+        }
+
+        #diary-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        #schedule-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .diary-item {
+            background-color: #f9f9f9;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .diary-item span {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .diary-item button {
+            background-color: #e74c3c;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .schedule-item {
+            background-color: #f9f9f9;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .schedule-item button {
+            background-color: #e74c3c;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .schedule-item button {
+            background-color: #e74c3c;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .diary-item span,
+        .schedule-item span {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .diary-item button:hover {
+            background-color: #c0392b;
+        }
+
+        .schedule-item button:hover {
+            background-color: #c0392b;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="diary-container">
+        <div id="diary-nav">
+            <a href="#" onclick="showSection('home')">홈</a>
+            <a href="#" onclick="showSection('diary')">일기</a>
+            <a href="#" onclick="showSection('schedule')">일정</a>
+        </div>
+
+        <div id="diary-content" class="section active" data-section="home">
+            <h2>나만의 다이어리</h2>
+            <p>皎月의 다이어리</p>
+            <div id="selected-date-content">
+                <h3 id="selected-date">날짜를 선택하세요</h3>
+                <div id="selected-date-diary">
+                    <h4>일기</h4>
+                    <ul id="selected-date-diary-list"></ul>
+                </div>
+                <div id="selected-date-schedule">
+                    <h4>일정</h4>
+                    <ul id="selected-date-schedule-list"></ul>
+                </div>
+            </div>
+
+
+            <div id="calendar"></div>
+        </div>
+
+        <div id="diary-content" class="section" data-section="diary">
+            <form id="diary-form">
+                <label for="diary-date">날짜:</label>
+                <input type="date" id="diary-date" required>
+                <label for="diary-text">일기 작성:</label>
+                <textarea id="diary-text" placeholder="오늘의 감상을 적어보세요" required></textarea>
+                <button type="button" onclick="addDiary()">작성하기</button>
+            </form>
+            <ul id="diary-list"></ul>
+        </div>
+
+        <div id="diary-content" class="section" data-section="schedule">
+            <form id="schedule-form">
+                <label for="schedule-date">날짜:</label>
+                <input type="date" id="schedule-date" required>
+                <label for="schedule-text">일정 추가:</label>
+                <textarea id="schedule-text" placeholder="일정을 추가하세요" required></textarea>
+                <button type="button" onclick="addSchedule()">추가하기</button>
+            </form>
+            <ul id="schedule-list"></ul>
+        </div>
+    </div>
+
+
+
+    <script>
+        var diaryData = JSON.parse(localStorage.getItem('diary')) || [];
+        var scheduleData = JSON.parse(localStorage.getItem('schedule')) || [];
+
+        function showSection(sectionId) {
+            var sections = document.querySelectorAll('.section');
+            sections.forEach(function (section) {
+                section.classList.remove('active');
+            });
+
+            var selectedSection = document.querySelector('.section[data-section="' + sectionId + '"]');
+            if (selectedSection) {
+                selectedSection.classList.add('active');
+            }
+
+            if (sectionId === 'home') {
+                generateCalendar();
+            }
+        }
+
+        function prevMonth() {
+            showCalendar(-1);
+        }
+
+        function nextMonth() {
+            showCalendar(1);
+        }
+
+        function showCalendar(monthOffset) {
+            var today = new Date();
+            today.setMonth(today.getMonth() + monthOffset);
+
+            generateCalendar(today);
+        }
+
+        function generateCalendar() {
+            var today = new Date();
+            var year = today.getFullYear();
+            var month = today.getMonth();
+            var firstDay = new Date(year, month, 1);
+            var lastDay = new Date(year, month + 1, 0);
+            var calendar = document.getElementById('calendar');
+            calendar.addEventListener('click', function (event) {
+                var target = event.target;
+                if (target.classList.contains('day')) {
+                    var selectedDate = new Date();
+                    selectedDate.setFullYear(selectedDate.getFullYear(), selectedDate.getMonth(), parseInt(target.textContent));  // 수정된 부분
+
+                    showSelectedDate(selectedDate);
+                }
+            });
+
+            calendar.innerHTML = '';
+
+            var daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
+            daysOfWeek.forEach(function (day) {
+                var dayElement = document.createElement('div');
+                dayElement.classList.add('day');
+                dayElement.textContent = day;
+                calendar.appendChild(dayElement);
+            });
+
+            for (var i = 0; i < firstDay.getDay(); i++) {
+                calendar.appendChild(document.createElement('div'));
+            }
+
+            for (var day = 1; day <= lastDay.getDate(); day++) {
+                var dayElement = document.createElement('div');
+                dayElement.classList.add('day');
+                dayElement.textContent = day;
+
+                if (year === today.getFullYear() && month === today.getMonth() && day === today.getDate()) {
+                    dayElement.classList.add('today');
+                }
+
+                calendar.appendChild(dayElement);
+            }
+        }
+
+        function addDiary() {
+            var dateElement = document.getElementById('diary-date');
+            var textElement = document.getElementById('diary-text');
+
+            var date = dateElement.value;
+            var text = textElement.value;
+
+            if (date.trim() !== '' && text.trim() !== '') {
+                var listElement = document.getElementById('diary-list');
+                var listItem = document.createElement('li');
+                listItem.className = 'diary-item';
+
+                var dateSpan = document.createElement('span');
+                dateSpan.textContent = date;
+                listItem.appendChild(dateSpan);
+
+                var textSpan = document.createElement('span');
+                textSpan.textContent = text;
+                listItem.appendChild(textSpan);
+
+                var deleteButton = document.createElement('button');
+                deleteButton.textContent = '삭제';
+                deleteButton.onclick = function () {
+                    var index = diaryData.findIndex(function (entry) {
+                        return entry.date === date && entry.text === text;
+                    });
+                    if (index !== -1) {
+                        diaryData.splice(index, 1);
+                        saveDiaryData();
+                    }
+
+                    listItem.parentNode.removeChild(listItem);
+                };
+                listItem.appendChild(deleteButton);
+
+                listElement.appendChild(listItem);
+
+                diaryData.push({ date: date, text: text });
+                saveDiaryData();
+
+                dateElement.value = '';
+                textElement.value = '';
+            }
+        }
+
+        function addSchedule() {
+            var dateElement = document.getElementById('schedule-date');
+            var textElement = document.getElementById('schedule-text');
+
+            var date = dateElement.value;
+            var text = textElement.value;
+
+            if (date.trim() !== '' && text.trim() !== '') {
+                var listElement = document.getElementById('schedule-list');
+                var listItem = document.createElement('li');
+                listItem.className = 'schedule-item';
+
+                var dateSpan = document.createElement('span');
+                dateSpan.textContent = date;
+                listItem.appendChild(dateSpan);
+
+                var textSpan = document.createElement('span');
+                textSpan.textContent = text;
+                listItem.appendChild(textSpan);
+
+                var deleteButton = document.createElement('button');
+                deleteButton.textContent = '삭제';
+                deleteButton.onclick = function () {
+                    var index = scheduleData.findIndex(function (entry) {
+                        return entry.date === date && entry.text === text;
+                    });
+                    if (index !== -1) {
+                        scheduleData.splice(index, 1);
+                        saveScheduleData();
+                    }
+
+                    listItem.parentNode.removeChild(listItem);
+                };
+                listItem.appendChild(deleteButton);
+
+                listElement.appendChild(listItem);
+
+                scheduleData.push({ date: date, text: text });
+                saveScheduleData();
+
+                dateElement.value = '';
+                textElement.value = '';
+            }
+        }
+
+        function saveDiaryData() {
+            localStorage.setItem('diary', JSON.stringify(diaryData));
+        }
+
+        function saveScheduleData() {
+            localStorage.setItem('schedule', JSON.stringify(scheduleData));
+        }
+
+        function loadDiaryAndScheduleData() {
+            diaryData = JSON.parse(localStorage.getItem('diary')) || [];
+
+            var diaryListElement = document.getElementById('diary-list');
+            diaryData.forEach(function (entry) {
+                var listItem = document.createElement('li');
+                listItem.className = 'diary-item';
+
+                var dateSpan = document.createElement('span');
+                dateSpan.textContent = entry.date;
+                listItem.appendChild(dateSpan);
+
+                var textSpan = document.createElement('span');
+                textSpan.textContent = entry.text;
+                listItem.appendChild(textSpan);
+
+                var deleteButton = document.createElement('button');
+                deleteButton.textContent = '삭제';
+                deleteButton.onclick = function () {
+                    var index = diaryData.findIndex(function (e) {
+                        return e.date === entry.date && e.text === entry.text;
+                    });
+                    if (index !== -1) {
+                        diaryData.splice(index, 1);
+                        saveDiaryData();
+                    }
+
+                    listItem.parentNode.removeChild(listItem);
+                };
+                listItem.appendChild(deleteButton);
+
+                diaryListElement.appendChild(listItem);
+            });
+
+            scheduleData = JSON.parse(localStorage.getItem('schedule')) || [];
+
+            var scheduleListElement = document.getElementById('schedule-list');
+            scheduleData.forEach(function (entry) {
+                var listItem = document.createElement('li');
+                listItem.className = 'schedule-item';
+
+                var dateSpan = document.createElement('span');
+                dateSpan.textContent = entry.date;
+                listItem.appendChild(dateSpan);
+
+                var textSpan = document.createElement('span');
+                textSpan.textContent = entry.text;
+                listItem.appendChild(textSpan);
+
+                var deleteButton = document.createElement('button');
+                deleteButton.textContent = '삭제';
+                deleteButton.onclick = function () {
+                    var index = scheduleData.findIndex(function (e) {
+                        return e.date === entry.date && e.text === entry.text;
+                    });
+                    if (index !== -1) {
+                        scheduleData.splice(index, 1);
+                        saveScheduleData();
+                    }
+
+                    listItem.parentNode.removeChild(listItem);
+                };
+                listItem.appendChild(deleteButton);
+
+                scheduleListElement.appendChild(listItem);
+            });
+        }
+
+        loadDiaryAndScheduleData();
+
+        var calendar = document.getElementById('calendar');
+        calendar.addEventListener('click', function (event) {
+            var target = event.target;
+            if (target.classList.contains('day')) {
+                var selectedDate = new Date();
+                selectedDate.setFullYear(today.getFullYear(), today.getMonth(), parseInt(target.textContent));  // 이 부분을 수정
+
+                showSelectedDate(selectedDate);
+            }
+        });
+
+        function showSelectedDate(selectedDate) {
+            var selectedDateElement = document.getElementById('selected-date');
+            var diaryListElement = document.getElementById('selected-date-diary-list');
+            var scheduleListElement = document.getElementById('selected-date-schedule-list');
+
+            var selectedDiaries = diaryData.filter(function (entry) {
+                return entry.date === formatDate(selectedDate);
+            });
+
+            var selectedSchedules = scheduleData.filter(function (entry) {
+                return entry.date === formatDate(selectedDate);
+            });
+
+            selectedDateElement.textContent = formatDate(selectedDate);
+
+            diaryListElement.innerHTML = '';
+            selectedDiaries.forEach(function (entry) {
+                var listItem = document.createElement('li');
+                listItem.className = 'diary-item';
+
+                var textSpan = document.createElement('span');
+                textSpan.textContent = entry.text;
+                listItem.appendChild(textSpan);
+
+                diaryListElement.appendChild(listItem);
+            });
+
+            scheduleListElement.innerHTML = '';
+            selectedSchedules.forEach(function (entry) {
+                var listItem = document.createElement('li');
+                listItem.className = 'schedule-item';
+
+                var textSpan = document.createElement('span');
+                textSpan.textContent = entry.text;
+                listItem.appendChild(textSpan);
+
+                scheduleListElement.appendChild(listItem);
+            });
+
+            var diarySection = document.getElementById('selected-date-diary');
+            var scheduleSection = document.getElementById('selected-date-schedule');
+
+            if (selectedDiaries.length > 0) {
+                diarySection.style.display = 'block';
+            } else {
+                diarySection.style.display = 'none';
+            }
+
+            if (selectedSchedules.length > 0) {
+                scheduleSection.style.display = 'block';
+            } else {
+                scheduleSection.style.display = 'none';
+            }
+        }
+
+
+        function formatDate(date) {
+            var year = date.getFullYear();
+            var month = date.getMonth() + 1;
+            var day = date.getDate();
+
+            return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
+        }
+    </script>
+</body>
+
+</html>
